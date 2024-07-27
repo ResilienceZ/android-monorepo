@@ -12,7 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 
 object CustomColor {
-    val DarkTangerin = Color(0xFFFFA629)
+    val DarkTangerin = Color(0xFFF89100)
     val White = Color(0xFFFFFFFF)
     val Black = Color(0xFF000000)
     val CadetGray = Color(0xFF90A1B6)

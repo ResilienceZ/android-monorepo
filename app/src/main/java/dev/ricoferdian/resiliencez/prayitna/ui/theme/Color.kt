@@ -15,4 +15,6 @@ object CustomColor {
     val DarkTangerin = Color(0xFFFFA629)
     val White = Color(0xFFFFFFFF)
     val Black = Color(0xFF000000)
+    val CadetGray = Color(0xFF90A1B6)
+    val VanillaGray = Color(0xFFEDE4B7)
 }

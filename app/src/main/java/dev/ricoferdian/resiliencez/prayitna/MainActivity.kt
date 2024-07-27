@@ -14,19 +14,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.NotificationCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
-import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
-import dev.ricoferdian.resiliencez.prayitna.ui.screen.profile.ProfileScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.navigation.Screen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.EmergencyCallScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,17 +48,9 @@ class MainActivity : ComponentActivity() {
         }
 
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             PrayitnaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Greeting(
-//                        name = "Android",
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-
-                    AddEvacMapScreen()
-                }
+                RootApp()
             }
         }
     }
@@ -105,6 +100,31 @@ class RegisterForPushNotificationsAsync(activity: Activity) : AsyncTask<Void, Vo
             .show()
     }
 }
+
+@Composable
+fun RootApp(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+){
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    Scaffold(
+        modifier = modifier,
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.EmergencyCall.route,
+            modifier = Modifier.padding(innerPadding)
+        ){
+            composable(Screen.EmergencyCall.route) {
+                EmergencyCallScreen()
+            }
+        }
+    }
+}
+
+
 
 class PushReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

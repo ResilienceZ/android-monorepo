@@ -63,7 +63,8 @@ import java.io.IOException
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToEvacList: () -> Unit,
 ) {
     val bottomSheetState = rememberBottomSheetScaffoldState(
         bottomSheetState = SheetState(
@@ -248,9 +249,7 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(CustomColor.White, shape = RoundedCornerShape(8.dp))
-                            .clickable {
-                                //navigate to evacuation maps screen
-                            }
+                            .clickable(onClick = onNavigateToEvacList)
                             .padding(16.dp),
                     ) {
                         Text(
@@ -283,7 +282,9 @@ fun ProfileScreen(
 @Composable
 fun ProfileScreenPreview() {
     PrayitnaTheme {
-        ProfileScreen()
+        ProfileScreen(
+            onNavigateToEvacList = {}
+        )
     }
 }
 

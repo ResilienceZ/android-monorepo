@@ -31,6 +31,7 @@ import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvac
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.EmergencyCallScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.location_selection.LocationSelectScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.profile.ProfileScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -114,7 +115,7 @@ fun RootApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.AddEvacMap.route,
+            startDestination = Screen.Profile.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.EmergencyCall.route) {
@@ -137,6 +138,14 @@ fun RootApp(
             composable(Screen.LocationSelection.route) {
                 LocationSelectScreen(
                     navController = navController
+                )
+            }
+
+            composable(Screen.Profile.route) {
+                ProfileScreen(
+                    onNavigateToEvacList = {
+                        navController.navigate(Screen.EvacMapList.route)
+                    }
                 )
             }
         }

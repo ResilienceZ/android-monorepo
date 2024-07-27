@@ -16,6 +16,7 @@ object CustomColor {
     val White = Color(0xFFFFFFFF)
     val Black = Color(0xFF000000)
     val CadetGray = Color(0xFF90A1B6)
+    val RaddyRed = Color(0xFFF02828)
     val VanillaGray = Color(0xFFEDE4B7)
 
     val Gray10 = Color(0xFFE6E6E6)

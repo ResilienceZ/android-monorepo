@@ -10,4 +10,6 @@ sealed class Screen(val route: String) {
     object EvacMapList: Screen("evac-map-list")
 
     object AddEvacMap: Screen("add-evac-map")
+
+    object Alert: Screen("alert")
 }

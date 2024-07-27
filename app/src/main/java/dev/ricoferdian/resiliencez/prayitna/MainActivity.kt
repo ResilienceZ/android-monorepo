@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.ricoferdian.resiliencez.prayitna.ui.navigation.Screen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.alert.AlertScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.EmergencyCallScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.location_selection.LocationSelectScreen
@@ -115,7 +116,7 @@ fun RootApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Profile.route,
+            startDestination = Screen.Alert.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.EmergencyCall.route) {
@@ -147,6 +148,10 @@ fun RootApp(
                         navController.navigate(Screen.EvacMapList.route)
                     }
                 )
+            }
+
+            composable(Screen.Alert.route) {
+                AlertScreen()
             }
         }
     }

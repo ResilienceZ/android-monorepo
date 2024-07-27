@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import dev.ricoferdian.resiliencez.prayitna.R
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.component.ItemEmergencyCall
@@ -30,7 +34,13 @@ import dev.ricoferdian.resiliencez.prayitna.ui.theme.CustomColor
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 
 @Composable
-fun EmergencyCallScreen() {
+fun EmergencyCallScreen(
+    viewModel: EmergencyCallViewModel = hiltViewModel()
+) {
+
+    val loadingValue = viewModel.loadingState.collectAsState()
+    val emergencyList by viewModel.emergencyCallItemsState.collectAsState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,11 +49,12 @@ fun EmergencyCallScreen() {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(10) {
+
+            items(emergencyList, key = { it.id }) { emergencyItem ->
                 ItemEmergencyCall(
-                    namePlace = "Ambulance",
-                    imagePlaceUrl = "",
-                    phoneNumberPlace = "+ 62 822 7788 9900",
+                    namePlace = emergencyItem.name,
+                    imagePlaceUrl = emergencyItem.imageUrl,
+                    phoneNumberPlace = emergencyItem.phoneNumber,
                     onCallClicked = {
                     },
                 )
@@ -51,7 +62,6 @@ fun EmergencyCallScreen() {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

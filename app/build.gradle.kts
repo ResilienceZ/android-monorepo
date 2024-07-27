@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.dagger.hilt)
+    implementation(libs.dagger.hilt.navigation)
     kapt(libs.dagger.hilt.compiler)
 
 

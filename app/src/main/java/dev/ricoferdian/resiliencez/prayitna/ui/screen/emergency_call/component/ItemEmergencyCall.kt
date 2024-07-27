@@ -44,7 +44,7 @@ fun ItemEmergencyCall(
             .background(
                 CustomColor.White,
                 shape = RoundedCornerShape(8.dp)
-            ),
+            ).clickable(onClick = onCallClicked),
         verticalAlignment = Alignment.CenterVertically
     ) {
         SubcomposeAsyncImage(
@@ -95,7 +95,6 @@ fun ItemEmergencyCall(
                 .padding(end = 16.dp)
                 .height(30.dp)
                 .width(30.dp)
-                .clickable(onClick = onCallClicked)
         )
     }
 }

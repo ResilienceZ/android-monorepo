@@ -68,6 +68,8 @@ dependencies {
     kapt(libs.dagger.hilt.compiler)
     implementation(libs.pushy)
     implementation(libs.osm)
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

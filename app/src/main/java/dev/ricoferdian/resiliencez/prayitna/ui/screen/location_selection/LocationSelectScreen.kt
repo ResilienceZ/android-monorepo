@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,8 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
-import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -27,13 +28,18 @@ import org.osmdroid.views.overlay.Marker
 
 @Composable
 fun LocationSelectScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: LocationSelectViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val address by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+//    val nominatimService = remember { NominatimService.create() }
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapMarker by remember { mutableStateOf<Marker?>(null) }
+
+    val loadingValue = viewModel.loadingState.collectAsState()
+    val reverseAddress by viewModel.addressState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -56,11 +62,8 @@ fun LocationSelectScreen(
                             }
                             overlays.add(marker)
                             mapMarker = marker
+                                viewModel.getEvacuationMapList(geoPoint.latitude, geoPoint.longitude)
 
-                            coroutineScope.launch {
-//                                val response = nominatimService.getAddress("json", geoPoint.latitude, geoPoint.longitude)
-//                                address = response.display_name
-                            }
                         }
                         false
                     }
@@ -70,11 +73,11 @@ fun LocationSelectScreen(
         )
 
         Text(
-            text = address,
+            text = reverseAddress?.display_name ?: "Got Null",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }

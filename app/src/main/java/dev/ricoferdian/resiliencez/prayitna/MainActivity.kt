@@ -30,6 +30,7 @@ import dev.ricoferdian.resiliencez.prayitna.ui.navigation.Screen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.EmergencyCallScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.location_selection.LocationSelectScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,8 +44,8 @@ class MainActivity : ComponentActivity() {
             if (!Pushy.isRegistered(this@MainActivity)) {
                 RegisterForPushNotificationsAsync(this@MainActivity).execute()
             }
-//            Pushy.subscribe("jakarta", applicationContext)
-//            Pushy.listen(applicationContext)
+            Pushy.subscribe("jakarta", applicationContext)
+            Pushy.listen(applicationContext)
         }
 
         super.onCreate(savedInstanceState)
@@ -114,7 +115,7 @@ fun RootApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.AddEvacMap.route,
+            startDestination = Screen.LocationSelection.route,
             modifier = Modifier.padding(innerPadding)
         ){
             composable(Screen.EmergencyCall.route) {
@@ -128,11 +129,13 @@ fun RootApp(
             composable(Screen.AddEvacMap.route) {
                 AddEvacMapScreen()
             }
+
+            composable(Screen.LocationSelection.route) {
+                LocationSelectScreen()
+            }
         }
     }
 }
-
-
 
 class PushReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -141,6 +144,14 @@ class PushReceiver : BroadcastReceiver() {
 
         // Attempt to extract the "message" property from the data payload: {"message":"Hello World!"}
         var notificationText = if (intent.getStringExtra("message") != null ) intent.getStringExtra("message") else "Test notification"
+
+        var extraPayload = if (intent.getStringExtra("data") != null ) intent.getStringExtra("data") else "Got Null"
+
+        Log.d("LOGDEBUG", extraPayload.toString())
+        Log.d("LOGDEBUG", "message: " + notificationText.toString())
+        Log.d("LOGDEBUG", "title: " + notificationTitle.toString())
+
+
 
         // Prepare a notification with vibration, sound and lights
         val builder = NotificationCompat.Builder(context)
@@ -166,3 +177,7 @@ class PushReceiver : BroadcastReceiver() {
         notificationManager.notify((Math.random() * 100000).toInt(), builder.build())
     }
 }
+
+data class NotifData (
+    val message: String? = null
+)

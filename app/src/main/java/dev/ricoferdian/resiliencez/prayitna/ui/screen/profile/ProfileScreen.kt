@@ -6,15 +6,19 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,9 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +49,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import dev.ricoferdian.resiliencez.prayitna.R
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.component.ErrorImageContent
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.profile.component.ItemFieldProfile
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.CustomColor
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import dev.ricoferdian.resiliencez.prayitna.ui.utils.showToast
@@ -93,7 +101,6 @@ fun ProfileScreen(
             }
         }
     )
-
 
     BottomSheetScaffold(
         scaffoldState = bottomSheetState,
@@ -203,24 +210,70 @@ fun ProfileScreen(
                     )
                 }
 
-                Text(
-                    text = "Rivaldo Fernandes",
-                    fontSize = 20.sp,
-                    color = CustomColor.Black,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    text = "rivaldofez@gmail.com",
-                    fontSize = 16.sp,
-                    color = CustomColor.CadetGray,
-                    fontWeight = FontWeight.Normal
-                )
 
                 HorizontalDivider(
                     modifier = Modifier
                         .padding(vertical = 16.dp)
                 )
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(CustomColor.Gray10, shape = RoundedCornerShape(8.dp))
+                        .padding(16.dp)
+                ) {
+                    ItemFieldProfile(
+                        title = "Email",
+                        textPlaceHolder = "",
+                        textInputed = "rivaldofez@gmail.com",
+                        modifier = Modifier
+                            .background(CustomColor.White, shape = RoundedCornerShape(8.dp))
+                            .padding(16.dp),
+                        isEditable = false
+                    )
+
+                    ItemFieldProfile(
+                        title = "Name",
+                        textPlaceHolder = "",
+                        textInputed = "Rivaldo Fernandes",
+                        modifier = Modifier
+                            .background(CustomColor.White, shape = RoundedCornerShape(8.dp))
+                            .padding(16.dp),
+                        isEditable = false
+                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(CustomColor.White, shape = RoundedCornerShape(8.dp))
+                            .clickable {
+                                //navigate to evacuation maps screen
+                            }
+                            .padding(16.dp),
+                    ) {
+                        Text(
+                            text = "Your Evacuation Map",
+                            fontSize = 16.sp,
+                            color = CustomColor.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(
+                            modifier = Modifier
+                                .weight(1f)
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.ic_chevron_right_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp),
+                            colorFilter = ColorFilter.tint(CustomColor.Black)
+                        )
+                    }
+                }
             }
         }
     }

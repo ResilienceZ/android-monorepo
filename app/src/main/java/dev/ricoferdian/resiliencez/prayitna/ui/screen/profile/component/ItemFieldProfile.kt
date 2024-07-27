@@ -29,7 +29,7 @@ fun ItemFieldProfile(
     modifier: Modifier = Modifier,
     isEditable: Boolean = true,
     textInputed: String? = null,
-    onChangeText: (String) -> Unit,
+    onChangeText: (String) -> Unit = {},
     ) {
     var inputedText by remember { mutableStateOf(TextFieldValue(textInputed ?: "")) }
 

@@ -31,7 +31,9 @@ class MainRepository @Inject constructor() {
                     id = i.toString(),
                     name = "Kantor",
                     imageUrl = "",
-                    geohash = "xxx"
+                    address = "xxx",
+                    latitude = 0.0,
+                    longitude = 0.0
                 )
             )
         }

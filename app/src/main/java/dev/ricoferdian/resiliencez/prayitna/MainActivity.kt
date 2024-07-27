@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.profile.ProfileScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
 //                        modifier = Modifier.padding(innerPadding)
 //                    )
 
-                    EvacuationMapScreen()
+                    AddEvacMapScreen()
                 }
             }
         }

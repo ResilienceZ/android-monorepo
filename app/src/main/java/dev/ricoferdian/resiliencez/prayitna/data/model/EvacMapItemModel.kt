@@ -4,5 +4,7 @@ data class EvacMapItemModel(
     val id: String,
     val name: String,
     val imageUrl: String,
-    val geohash: String
+    val address: String,
+    val latitude: Double,
+    val longitude: Double
 )

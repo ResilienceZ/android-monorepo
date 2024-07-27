@@ -173,8 +173,8 @@ fun AddEvacMapScreen(
             Column {
                 ItemFieldProfile(
                     title = "Name",
-                    textPlaceHolder = "",
-                    textInputed = "Kantor",
+                    textPlaceHolder = "Input location name",
+                    textInputed = null,
                     modifier = Modifier
                         .background(CustomColor.White, shape = RoundedCornerShape(8.dp))
                         .padding(16.dp),
@@ -237,6 +237,22 @@ fun AddEvacMapScreen(
                             contentScale = ContentScale.Crop,
                         )
                     }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .background(CustomColor.DarkTangerin, shape = RoundedCornerShape(8.dp))
+                        .clickable {  }
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Submit",
+                        fontSize = 16.sp,
+                        color = CustomColor.White,
+                    )
                 }
             }
         }

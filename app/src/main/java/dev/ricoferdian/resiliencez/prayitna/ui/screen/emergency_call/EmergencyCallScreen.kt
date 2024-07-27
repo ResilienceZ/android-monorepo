@@ -42,9 +42,9 @@ fun EmergencyCallScreen() {
             items(10) {
                 ItemEmergencyCall(
                     namePlace = "Ambulance",
-                    imagePlaceUrl = "https://amandeephospital.org/wp-content/uploads/2022/02/ambulance-ad.jpg",
+                    imagePlaceUrl = "",
+                    phoneNumberPlace = "+ 62 822 7788 9900",
                     onCallClicked = {
-                        
                     },
                 )
             }

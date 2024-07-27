@@ -3,6 +3,7 @@ package dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -32,6 +33,7 @@ import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 fun ItemEmergencyCall(
     namePlace: String,
     imagePlaceUrl: String,
+    phoneNumberPlace: String,
     onCallClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -46,7 +48,7 @@ fun ItemEmergencyCall(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SubcomposeAsyncImage(
-            model = "https://placehold.co/600x400",
+            model = imagePlaceUrl,
             contentDescription = null,
             loading = { },
             error = {
@@ -58,14 +60,27 @@ fun ItemEmergencyCall(
             contentScale = ContentScale.Crop,
         )
 
-        Text(
-            text = "Ambulance",
-            color = CustomColor.Black,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-        )
+        Column {
+            Text(
+                text = namePlace,
+                color = CustomColor.Black,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            )
+
+            Text(
+                text = phoneNumberPlace,
+                color = CustomColor.CadetGray,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                maxLines = 1,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            )
+        }
 
         Spacer(
             modifier = Modifier
@@ -93,6 +108,7 @@ fun EmergencyCallScreenPreview() {
         ItemEmergencyCall(
             namePlace = "Ambulance",
             imagePlaceUrl = "",
+            phoneNumberPlace = "+ 62 8 22 7788 9900",
             onCallClicked = {}
         )
     }

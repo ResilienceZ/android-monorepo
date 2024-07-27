@@ -67,6 +67,8 @@ dependencies {
     implementation(libs.dagger.hilt.navigation)
     kapt(libs.dagger.hilt.compiler)
 
+    implementation(libs.pushy)
+
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

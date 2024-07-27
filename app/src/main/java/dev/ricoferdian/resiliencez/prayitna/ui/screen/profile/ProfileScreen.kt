@@ -73,9 +73,7 @@ fun ProfileScreen(
     )
 
     val context = LocalContext.current
-
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
@@ -163,6 +161,7 @@ fun ProfileScreen(
     ) {
         Box(
             modifier = Modifier
+                .padding(it)
                 .background(CustomColor.White)
                 .fillMaxSize()
         ) {
@@ -170,6 +169,7 @@ fun ProfileScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(16.dp)
             ) {
                 if (imageUri == null) {
                     SubcomposeAsyncImage(

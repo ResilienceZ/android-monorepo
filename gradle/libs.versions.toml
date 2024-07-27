@@ -14,6 +14,9 @@ navCompose = "2.7.7"
 coilCompose = "2.2.2"
 hilt = "2.51.1"
 hiltNavigation = "1.0.0"
+osm = "6.1.11"
+retrofit = "2.9.0"
+okhttp = "4.9.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,7 +40,9 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
 dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt"}
 dagger-hilt-navigation = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigation"}
-
+osm = { group = "org.osmdroid", name = "osmdroid-android", version.ref = "osm"}
+retrofit = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+okhttp = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 
 [plugins]

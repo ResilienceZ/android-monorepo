@@ -2,11 +2,22 @@ package dev.ricoferdian.resiliencez.prayitna.data
 
 import dev.ricoferdian.resiliencez.prayitna.data.model.EmergencyItemModel
 import dev.ricoferdian.resiliencez.prayitna.data.model.EvacMapItemModel
+import dev.ricoferdian.resiliencez.prayitna.data.remote.OsmApiService
+import dev.ricoferdian.resiliencez.prayitna.data.remote.response.AddressResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
-class MainRepository @Inject constructor() {
+class MainRepository @Inject constructor(private val osmApiService: OsmApiService) {
+
+    suspend fun getReverseAddress(lat: Double, lon: Double, format: String): Flow<AddressResponse?> {
+        return flowOf(osmApiService.getAddress(
+            format = format,
+            lat = lat,
+            lon = lon
+        ))
+    }
+
     suspend fun getEmergencyList(): Flow<List<EmergencyItemModel>> {
         val items = ArrayList<EmergencyItemModel>()
         for (i in 1..10) {

@@ -87,8 +87,7 @@ class RegisterForPushNotificationsAsync(activity: Activity) : AsyncTask<Void, Vo
 
             // Display error in alert
             message = result.message.toString()
-        }
-        else {
+        } else {
             // Registration success, result is device token
             message = "Pushy device token: " + result.toString() + "\n\n(copy from logcat)"
         }
@@ -106,7 +105,7 @@ class RegisterForPushNotificationsAsync(activity: Activity) : AsyncTask<Void, Vo
 fun RootApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-){
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -115,23 +114,30 @@ fun RootApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.LocationSelection.route,
+            startDestination = Screen.AddEvacMap.route,
             modifier = Modifier.padding(innerPadding)
-        ){
+        ) {
             composable(Screen.EmergencyCall.route) {
                 EmergencyCallScreen()
             }
-            
+
             composable(Screen.EvacMapList.route) {
                 EvacuationMapScreen()
             }
 
             composable(Screen.AddEvacMap.route) {
-                AddEvacMapScreen()
+                AddEvacMapScreen(
+                    navController = navController,
+                    onNavigateToLocationSelect = {
+                        navController.navigate(Screen.LocationSelection.route)
+                    }
+                )
             }
 
             composable(Screen.LocationSelection.route) {
-                LocationSelectScreen()
+                LocationSelectScreen(
+                    navController = navController
+                )
             }
         }
     }
@@ -140,17 +146,21 @@ fun RootApp(
 class PushReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         // Attempt to extract the "title" property from the data payload, or fallback to app shortcut label
-        val notificationTitle = if (intent.getStringExtra("title") != null) intent.getStringExtra("title") else context.packageManager.getApplicationLabel(context.applicationInfo).toString()
+        val notificationTitle =
+            if (intent.getStringExtra("title") != null) intent.getStringExtra("title") else context.packageManager.getApplicationLabel(
+                context.applicationInfo
+            ).toString()
 
         // Attempt to extract the "message" property from the data payload: {"message":"Hello World!"}
-        var notificationText = if (intent.getStringExtra("message") != null ) intent.getStringExtra("message") else "Test notification"
+        var notificationText =
+            if (intent.getStringExtra("message") != null) intent.getStringExtra("message") else "Test notification"
 
-        var extraPayload = if (intent.getStringExtra("data") != null ) intent.getStringExtra("data") else "Got Null"
+        var extraPayload =
+            if (intent.getStringExtra("data") != null) intent.getStringExtra("data") else "Got Null"
 
         Log.d("LOGDEBUG", extraPayload.toString())
         Log.d("LOGDEBUG", "message: " + notificationText.toString())
         Log.d("LOGDEBUG", "title: " + notificationTitle.toString())
-
 
 
         // Prepare a notification with vibration, sound and lights
@@ -162,13 +172,21 @@ class PushReceiver : BroadcastReceiver() {
             .setLights(Color.RED, 1000, 1000)
             .setVibrate(longArrayOf(0, 400, 250, 400))
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setContentIntent(PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    Intent(context, MainActivity::class.java),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            )
 
         // Automatically configure a Notification Channel for devices running Android O+
         Pushy.setNotificationChannel(builder, context)
 
         // Get an instance of the NotificationManager service
-        val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         // Build the notification and display it
         //
@@ -178,6 +196,6 @@ class PushReceiver : BroadcastReceiver() {
     }
 }
 
-data class NotifData (
+data class NotifData(
     val message: String? = null
 )

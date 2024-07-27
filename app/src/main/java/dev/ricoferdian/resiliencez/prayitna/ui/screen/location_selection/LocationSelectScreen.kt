@@ -28,8 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.google.gson.Gson
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.CustomColor
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
+import dev.ricoferdian.resiliencez.prayitna.ui.utils.showToast
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -39,13 +42,12 @@ import org.osmdroid.views.overlay.Marker
 @Composable
 fun LocationSelectScreen(
     modifier: Modifier = Modifier,
+    navController: NavController?,
     viewModel: LocationSelectViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     var mapView by remember { mutableStateOf<MapView?>(null) }
     var mapMarker by remember { mutableStateOf<Marker?>(null) }
-
-    val loadingValue = viewModel.loadingState.collectAsState()
     val reverseAddress by viewModel.addressState.collectAsState()
 
     Box(
@@ -102,7 +104,23 @@ fun LocationSelectScreen(
                 modifier = Modifier
                     .background(CustomColor.DarkTangerin, shape = RoundedCornerShape(8.dp))
                     .padding(4.dp)
-                    .clickable {  }
+                    .clickable {
+                        val lat = mapMarker?.position?.latitude
+                        val lon = mapMarker?.position?.longitude
+                        val addressName = reverseAddress?.display_name
+
+                        if(lat == null || lon == null || addressName == null){
+                            showToast(context, "Address not valid")
+                        } else {
+                            val location = LocationNavModel(lat, lon, addressName)
+                            val gson = Gson()
+                            val stringParams = gson.toJson(location)
+                            navController?.previousBackStackEntry?.savedStateHandle?.set("location", stringParams)
+                            navController?.popBackStack()
+                        }
+
+
+                    }
 
             ){
                 Text(
@@ -119,6 +137,14 @@ fun LocationSelectScreen(
 @Composable
 fun LocationSelectScreenPreview() {
     PrayitnaTheme {
-        LocationSelectScreen()
+        LocationSelectScreen(
+            navController = null
+        )
     }
 }
+
+data class LocationNavModel(
+    val lat: Double,
+    val lon: Double,
+    val address: String
+)

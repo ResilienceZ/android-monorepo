@@ -43,7 +43,9 @@ fun EmergencyCallScreen() {
                 ItemEmergencyCall(
                     namePlace = "Ambulance",
                     imagePlaceUrl = "https://amandeephospital.org/wp-content/uploads/2022/02/ambulance-ad.jpg",
-                    onCallClicked = { },
+                    onCallClicked = {
+                        
+                    },
                 )
             }
         }

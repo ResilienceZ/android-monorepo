@@ -16,11 +16,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,7 +27,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.ricoferdian.resiliencez.prayitna.ui.navigation.Screen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.EmergencyCallScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -114,11 +114,19 @@ fun RootApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.EmergencyCall.route,
+            startDestination = Screen.AddEvacMap.route,
             modifier = Modifier.padding(innerPadding)
         ){
             composable(Screen.EmergencyCall.route) {
                 EmergencyCallScreen()
+            }
+            
+            composable(Screen.EvacMapList.route) {
+                EvacuationMapScreen()
+            }
+
+            composable(Screen.AddEvacMap.route) {
+                AddEvacMapScreen()
             }
         }
     }
@@ -156,21 +164,5 @@ class PushReceiver : BroadcastReceiver() {
         // Use a random notification ID so multiple
         // notifications don't overwrite each other
         notificationManager.notify((Math.random() * 100000).toInt(), builder.build())
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PrayitnaTheme {
-        Greeting("Android")
     }
 }

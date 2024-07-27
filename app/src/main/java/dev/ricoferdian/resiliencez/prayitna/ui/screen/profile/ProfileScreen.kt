@@ -3,6 +3,7 @@ package dev.ricoferdian.resiliencez.prayitna.ui.screen.profile
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -39,7 +40,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.component.ErrorImageContent
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.CustomColor
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
@@ -65,15 +68,18 @@ fun ProfileScreen(
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-    }
-
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        bitmap?.let {
-            imageUri = saveBitmapToFile(context, it)
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            imageUri = uri
+            Log.d("LOGDEBUG", imageUri.toString())
         }
-    }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+            bitmap?.let {
+                imageUri = saveBitmapToFile(context, it)
+            }
+        }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -146,7 +152,7 @@ fun ProfileScreen(
                 }
             }
         },
-        sheetPeekHeight = 0.dp // Hide the sheet when it is collapsed
+        sheetPeekHeight = 0.dp
     ) {
         Box(
             modifier = Modifier
@@ -158,24 +164,44 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                SubcomposeAsyncImage(
-                    model = "",
-                    contentDescription = null,
-                    loading = { },
-                    error = {
-                        ErrorImageContent()
-                    },
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(120.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            coroutineScope.launch {
-                                bottomSheetState.bottomSheetState.expand()
-                            }
+                if (imageUri == null) {
+                    SubcomposeAsyncImage(
+                        model = "",
+                        contentDescription = null,
+                        loading = { },
+                        error = {
+                            ErrorImageContent()
                         },
-                    contentScale = ContentScale.Crop,
-                )
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(120.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                coroutineScope.launch {
+                                    bottomSheetState.bottomSheetState.expand()
+                                }
+                            },
+                        contentScale = ContentScale.Crop,
+                    )
+                } else {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUri)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(120.dp)
+                            .height(120.dp)
+                            .clip(CircleShape)
+                            .clickable {
+                                coroutineScope.launch {
+                                    bottomSheetState.bottomSheetState.expand()
+                                }
+                            },
+                        contentScale = ContentScale.Crop,
+                    )
+                }
 
                 Text(
                     text = "Rivaldo Fernandes",

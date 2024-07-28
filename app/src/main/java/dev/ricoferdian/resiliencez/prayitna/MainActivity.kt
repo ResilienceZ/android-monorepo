@@ -19,12 +19,23 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -44,6 +55,7 @@ import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationM
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.location_selection.LocationSelectScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.profile.ProfileScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.splash.SplashScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.theme.CustomColor
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -132,6 +144,14 @@ fun RootApp(
 
     Scaffold(
         modifier = modifier,
+        bottomBar = {
+            if(
+                currentRoute == Screen.Dashboard.route ||
+                currentRoute == Screen.EmergencyCall.route ||
+                currentRoute == Screen.Profile.route) {
+                BottomBar(navController)
+            }
+        },
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -289,4 +309,76 @@ data class NotifData (
     val severity: Long? = null,
     val timestamp: String? = null,
     val type: String? = null
+)
+
+@Composable
+private fun BottomBar(
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+) {
+    NavigationBar(
+        modifier = modifier,
+        containerColor = CustomColor.Gray40,
+        contentColor = CustomColor.Gray60,
+    ) {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        val navigationItems = listOf(
+            BottomNavigationItem(
+                title = "Home",
+                icon = Icons.Default.Home,
+                screen = Screen.Dashboard
+            ),
+            BottomNavigationItem(
+                title = "Emergency",
+                icon = Icons.Default.Phone,
+                screen = Screen.EmergencyCall
+            ),
+            BottomNavigationItem(
+                title = "Profile",
+                icon = Icons.Default.Person,
+                screen = Screen.Profile
+            )
+        )
+
+        NavigationBar(
+            containerColor = CustomColor.Gray20
+        ) {
+            navigationItems.map { navItem ->
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            imageVector = navItem.icon,
+                            contentDescription = navItem.title
+                        )
+                    },
+                    label = { Text(navItem.title) },
+                    selected = currentRoute == navItem.screen.route,
+                    onClick = {
+                        navController.navigate(navItem.screen.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            restoreState = true
+                            launchSingleTop = true
+                        }
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = CustomColor.White, // Color of the selected item icon
+                        selectedTextColor = CustomColor.Black, // Color of the selected item text
+                        unselectedIconColor = CustomColor.Gray40, // Color of the unselected item icon
+                        unselectedTextColor = CustomColor.Gray40, // Color of the unselected item text
+                        indicatorColor = CustomColor.DarkTangerin
+                    )
+                )
+            }
+        }
+    }
+}
+
+data class BottomNavigationItem(
+    val title: String,
+    val icon: ImageVector,
+    val screen: Screen
 )

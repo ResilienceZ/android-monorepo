@@ -29,10 +29,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.ricoferdian.resiliencez.prayitna.ui.navigation.Screen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.alert.AlertScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.dashboard.DashboardScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.emergency_call.EmergencyCallScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.evacuation_map.EvacuationMapScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.location_selection.LocationSelectScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.profile.ProfileScreen
+import dev.ricoferdian.resiliencez.prayitna.ui.screen.splash.SplashScreen
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -116,7 +118,7 @@ fun RootApp(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Alert.route,
+            startDestination = Screen.Splash.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.EmergencyCall.route) {
@@ -152,6 +154,16 @@ fun RootApp(
 
             composable(Screen.Alert.route) {
                 AlertScreen()
+            }
+
+            composable(Screen.Dashboard.route) {
+                DashboardScreen()
+            }
+
+            composable(Screen.Splash.route) {
+                SplashScreen {
+                    navController.navigate(Screen.Dashboard.route)
+                }
             }
         }
     }

@@ -12,4 +12,8 @@ sealed class Screen(val route: String) {
     object AddEvacMap: Screen("add-evac-map")
 
     object Alert: Screen("alert")
+
+    object Dashboard: Screen("dashboard")
+
+    object Splash: Screen("splash")
 }

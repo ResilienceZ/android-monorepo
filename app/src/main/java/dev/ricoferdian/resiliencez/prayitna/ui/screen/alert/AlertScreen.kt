@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,9 +32,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.ricoferdian.resiliencez.prayitna.NotifData
 import dev.ricoferdian.resiliencez.prayitna.R
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.CustomColor
 import dev.ricoferdian.resiliencez.prayitna.ui.theme.PrayitnaTheme
@@ -42,6 +45,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AlertScreen(
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit,
+    notifData: NotifData? = null
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -95,6 +100,7 @@ fun AlertScreen(
                    if (dragAmount < -50) {
                        coroutineScope.launch {
                             stopAlarm()
+                           onNavigateBack()
 
                        }
                    }
@@ -122,11 +128,21 @@ fun AlertScreen(
             )
 
             Text(
-                text = "Earthquake at Jakarta",
+                text = (notifData?.type ?: "").capitalize(),
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = CustomColor.Black,
+                color = CustomColor.White,
                 modifier = Modifier
+            )
+
+            Text(
+                text = notifData?.description ?: "",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = CustomColor.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             )
 
             Spacer(
@@ -147,7 +163,7 @@ fun AlertScreen(
                 text = "Swipe Up To Stop",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                color = CustomColor.Black,
+                color = CustomColor.White,
                 modifier = Modifier
             )
 
@@ -164,6 +180,8 @@ fun AlertScreen(
 @Composable
 fun AlertScreenPreview() {
     PrayitnaTheme {
-        AlertScreen()
+        AlertScreen(
+            onNavigateBack = {}
+        )
     }
 }

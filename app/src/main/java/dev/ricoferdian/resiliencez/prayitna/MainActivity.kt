@@ -7,24 +7,33 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import dagger.hilt.android.AndroidEntryPoint
 import dev.ricoferdian.resiliencez.prayitna.ui.navigation.Screen
 import dev.ricoferdian.resiliencez.prayitna.ui.screen.add_evacuation_map.AddEvacMapScreen
@@ -52,10 +61,13 @@ class MainActivity : ComponentActivity() {
             Pushy.listen(applicationContext)
         }
 
+        val extraData = intent.getStringExtra("NOTIF_EXTRA")
+        Log.d("LOGDEBUG", "main extra data " + extraData.toString())
+
         super.onCreate(savedInstanceState)
         setContent {
             PrayitnaTheme {
-                RootApp()
+                RootApp(extraData = extraData)
             }
         }
     }
@@ -97,11 +109,11 @@ class RegisterForPushNotificationsAsync(activity: Activity) : AsyncTask<Void, Vo
         }
 
         // Display dialog
-        android.app.AlertDialog.Builder(activity)
-            .setTitle("Pushy")
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok, null)
-            .show()
+//        android.app.AlertDialog.Builder(activity)
+//            .setTitle("Pushy")
+//            .setMessage(message)
+//            .setPositiveButton(android.R.string.ok, null)
+//            .show()
     }
 }
 
@@ -109,16 +121,25 @@ class RegisterForPushNotificationsAsync(activity: Activity) : AsyncTask<Void, Vo
 fun RootApp(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
+    extraData: String?
 ) {
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val gson = Gson()
+    val params = gson.fromJson(extraData, NotifData::class.java)
+
 
     Scaffold(
         modifier = modifier,
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Splash.route,
+            startDestination = if(extraData == null) {
+                Screen.Splash.route
+            } else {
+                Screen.Alert.createRoute(params = params)
+            },
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.EmergencyCall.route) {
@@ -152,8 +173,27 @@ fun RootApp(
                 )
             }
 
-            composable(Screen.Alert.route) {
-                AlertScreen()
+            composable(
+                route = Screen.Alert.route,
+                arguments = listOf(navArgument("params") { type = NavType.StringType}),
+                enterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { it } // Slide in from the right
+                    )
+                },
+            ) {
+
+                AlertScreen(
+                    onNavigateBack = {
+                        if(navController.previousBackStackEntry == null) {
+                            navController.navigate(Screen.Dashboard.route)
+                        } else {
+                            navController.navigateUp()
+                        }
+                    },
+                    notifData = params
+
+                )
             }
 
             composable(Screen.Dashboard.route) {
@@ -177,6 +217,7 @@ class PushReceiver : BroadcastReceiver() {
                 context.applicationInfo
             ).toString()
 
+
         // Attempt to extract the "message" property from the data payload: {"message":"Hello World!"}
         var notificationText =
             if (intent.getStringExtra("message") != null) intent.getStringExtra("message") else "Test notification"
@@ -184,27 +225,28 @@ class PushReceiver : BroadcastReceiver() {
         var extraPayload =
             if (intent.getStringExtra("data") != null) intent.getStringExtra("data") else "Got Null"
 
-        Log.d("LOGDEBUG", extraPayload.toString())
-        Log.d("LOGDEBUG", "message: " + notificationText.toString())
-        Log.d("LOGDEBUG", "title: " + notificationTitle.toString())
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("NOTIF_EXTRA", extraPayload)
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-
-        // Prepare a notification with vibration, sound and lights
         val builder = NotificationCompat.Builder(context)
             .setAutoCancel(true)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.drawable.ic_priyatna)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
             .setLights(Color.RED, 1000, 1000)
             .setVibrate(longArrayOf(0, 400, 250, 400))
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setContentIntent(
-                PendingIntent.getActivity(
-                    context,
-                    0,
-                    Intent(context, MainActivity::class.java),
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
+//                PendingIntent.getActivity(
+//                    context,
+//                    0,
+//                    Intent(context, MainActivity::class.java),
+//                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+//                )
+                pendingIntent
             )
 
         // Automatically configure a Notification Channel for devices running Android O+
@@ -222,6 +264,29 @@ class PushReceiver : BroadcastReceiver() {
     }
 }
 
-data class NotifData(
-    val message: String? = null
+fun Context.drawableToBitmap(drawableId: Int): Bitmap? {
+    val drawable: Drawable? = ContextCompat.getDrawable(this, drawableId)
+    if (drawable == null) {
+        return null
+    }
+    val bitmap = Bitmap.createBitmap(
+        drawable.intrinsicWidth,
+        drawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
+}
+
+data class NotifData (
+    val description: String? = null,
+    val id: JsonElement? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val scale: Double? = null,
+    val severity: Long? = null,
+    val timestamp: String? = null,
+    val type: String? = null
 )
